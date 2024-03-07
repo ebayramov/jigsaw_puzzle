@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0
+        }
+
+        #puzzle {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            border: 1px solid #333;
+            box-shadow: 0 0 10px #333;
+        }
+
+        #puzzle>* {
+            position: absolute;
+        }
+
+        h2 {
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 100px;
+            color: red;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="puzzle"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+        $(() => {
+            let row = 6
+            let col = 8
+            let count
+            let z = 0
+            for (let i = 0; i < row; i++) {
+                for (let j = 0; j < col; j++) {
+                    $("#puzzle").append(`<div id="p${i}${j}"></div>`)
+                    $(`#p${i}${j}`).css({
+                        width: '100px',
+                        height: '100px',
+                        border: '1px solid #333',
+                        left: j * 100 + 'px',
+                        top: i * 100 + 'px',
+                        background: `url('img/puzzle1.jpg') ${-j * 100}px ${-i * 100}px `
+                    })
+                }
+            }
+
+            setTimeout(() => {
+                for (let i = 0; i < row; i++) {
+                    for (let j = 0; j < col; j++) {
+                        $(`#p${i}${j}`)
+                            .css({
+                                left: rnd(800, $(window).width() - 100) + 'px',
+                                top: rnd(0, 600) + 'px',
+                                boxShadow: '0 0 3px #333',
+                                transform: `rotate(${rnd(-30, 30)}deg)`
+                            })
+                            .draggable({
+                                snap: true,
+                                start: function () {
+                                    $(this).css({
+                                        boxShadow: '0 0 5px #333',
+                                        transform: `rotate(0deg)`
+                                    })
+                                },
+                                stop: function () {
+                                    $(this).css({
+                                        left: Math.round($(this).position().left / 100) * 100 + 'px',
+                                        top: Math.round($(this).position().top / 100) * 100 + 'px',
+                                        boxShadow: 'none',
+                                    })
+
+                                    for (let i = 0; i < row; i++) {
+                                        for (let j = 0; j < col; j++) {
+                                            if ($(`#p${i}${j}`).position().left === j * 100 && $(`#p${i}${j}`).position().top === i * 100) {
+                                                z++
+                                            }
+                                        }
+                                    }                                 
+
+                                    if (z == row * col) {
+                                        $("body").append(`<h2> CONGRATULATIONS!!! YOU MADE IT &#127942; </h2>`)
+                                    }
+                                    z = 0
+                                }
+                            })
+                    }
+                }
+            }, 3000)
+
+            function rnd(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+
+
+
+
+        })
+    </script>
+</body>
+
+</html>
